@@ -31,6 +31,8 @@
         </table>
     </form>
 
+    <button id="get">GET STUDENTS</button>
+
     <script>
         let form = document.getElementById("form")
         let userDetails = {}
@@ -46,6 +48,14 @@
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify(userDetails)
             }).then(res => res.json())
+                .then(data => console.log(data))
+                .catch(err => console.log(err))
+        })
+
+        let getBtn = document.getElementById("get")
+        getBtn.addEventListener("click", () => {
+            fetch("/getstudents")
+                .then(res => res.json())
                 .then(data => console.log(data))
                 .catch(err => console.log(err))
         })

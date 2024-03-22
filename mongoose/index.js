@@ -23,6 +23,8 @@ app.get("/", (req, res) => {
 //     console.log(req.url, req.method)
 //     res.sendFile(path.join(__dirname, "view", "index.css"))
 // })
+
+//create document
 app.post("/newstudent", async (req, res) => {
     console.log(req.url, req.method);
     console.log(req.body)
@@ -30,6 +32,13 @@ app.post("/newstudent", async (req, res) => {
     const response = await student.save()
     // console.log(response);
     res.send({ msg: "data recieved" })
+})
+
+//get document
+app.get("/getstudents", async (req, res) => {
+    let students = await studentModel.find()
+    // console.log(students);
+    res.send(students)
 })
 
 app.listen(7000, "127.0.0.7", () => {

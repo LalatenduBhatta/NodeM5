@@ -7,13 +7,13 @@ const studentSchema = mongoose.Schema({
         required: true
     },
     sname: {
-        type: String
+        type: String,
+        default: "XYZ"
     },
     smobile: {
         type: Number
     }
 })
-
 const studentModel = mongoose.model("student", studentSchema)
 
 module.exports = { studentModel }
