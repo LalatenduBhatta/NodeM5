@@ -43,4 +43,34 @@
 //     }
 // })
 
+const express = require("express")
+const bcrypt = require("bcrypt")
+const { dbConnect } = require("./db/dbConnect")
+const { userModel } = require("./model/userModel")
+const PORT = 8000
+const hostName = "127.0.0.8"
 
+const app = express()
+//middlewares--------------
+//json
+app.use(express.json())
+
+//API----------------------
+//get
+app.get("/getdata", (req, res) => {
+    res.send("this is a get api")
+})
+//post
+app.post("/post", async (req, res) => {
+    let user = req.body
+    const { password } = user
+    const hasedPassword = await bcrypt.hash(password, 10)
+    const newuserData = new userModel({ ...user, password: hasedPassword })
+    await newuserData.save()
+    res.status(201).send({ message: "data stored in db" })
+})
+
+app.listen(PORT, hostName, () => {
+    console.log(`server started at http://${hostName}:${PORT}`);
+    dbConnect()
+})
