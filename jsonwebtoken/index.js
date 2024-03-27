@@ -45,6 +45,7 @@
 
 const express = require("express")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 const { dbConnect } = require("./db/dbConnect")
 const { userModel } = require("./model/userModel")
 const PORT = 8000
@@ -60,15 +61,46 @@ app.use(express.json())
 app.get("/getdata", (req, res) => {
     res.send("this is a get api")
 })
-//post
+//post registration
 app.post("/post", async (req, res) => {
     let user = req.body
-    const { password } = user
+    const { password, username } = user
+    if (username) {
+        let isTaken = await userModel.findOne({ username })
+        if (isTaken) {
+            return res.status(400).send({ message: "username already taken" })
+        }
+    }
     const hasedPassword = await bcrypt.hash(password, 10)
     const newuserData = new userModel({ ...user, password: hasedPassword })
     await newuserData.save()
     res.status(201).send({ message: "data stored in db" })
 })
+
+//post login
+app.post("/login", async (req, res) => {
+    let data = req.body
+    const { username, password } = data
+    try {
+        let isUser = await userModel.findOne({ username })
+        if (!isUser) {
+            return res.status(404).send({ message: "username not found" })
+        } else {
+            let isMatched = await bcrypt.compare(password, isUser.password)
+            // console.log(isMatched);
+            if (!isMatched) {
+                return res.status(400).send({ message: "password is not matching" })
+            }
+            else {
+                let token = jwt.sign(isUser._id.toString(), "secretKey", { expiresIn: "7d" })
+                return res.status(200).send({ token })
+            }
+        }
+    } catch (error) {
+        return res.status(500).send({ message: "something went wrong" })
+    }
+})
+
 
 app.listen(PORT, hostName, () => {
     console.log(`server started at http://${hostName}:${PORT}`);
