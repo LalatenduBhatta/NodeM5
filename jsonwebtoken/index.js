@@ -92,12 +92,33 @@ app.post("/login", async (req, res) => {
                 return res.status(400).send({ message: "password is not matching" })
             }
             else {
-                let token = jwt.sign(isUser._id.toString(), "secretKey", { expiresIn: "7d" })
+                let token = jwt.sign(isUser._id.toString(), "Vicky")
                 return res.status(200).send({ token })
             }
         }
     } catch (error) {
         return res.status(500).send({ message: "something went wrong" })
+    }
+})
+
+//token verifivation
+app.get("/getuser", async (req, res) => {
+    // console.log(req.headers.authorization);
+    let token = req?.headers?.authorization?.split(" ")?.[1]
+    // console.log(token);
+    let userId = jwt.verify(token, "Vicky")
+    // console.log(userId);
+    if (!userId) {
+        return res.status(400).send({ message: "token in not valid" })
+    }
+    else {
+        let user = await userModel.findById(userId).select("-password -_id -__v")
+        // console.log(user);
+        if (user) {
+            return res.status(200).send(user)
+        } else {
+            return res.status(404).send({ message: "user not found" })
+        }
     }
 })
 
