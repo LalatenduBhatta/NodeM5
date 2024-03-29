@@ -48,6 +48,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const { dbConnect } = require("./db/dbConnect")
 const { userModel } = require("./model/userModel")
+const cors = require("cors")
 const PORT = 8000
 const hostName = "127.0.0.8"
 
@@ -55,6 +56,8 @@ const app = express()
 //middlewares--------------
 //json
 app.use(express.json())
+//cors
+app.use(cors())
 
 //API----------------------
 //get

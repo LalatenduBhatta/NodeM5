@@ -9,7 +9,19 @@ const SignUp = () => {
     }
     const handelSubmit = (event) => {
         event.preventDefault()
-        console.log(formData);
+        // console.log(formData);
+        const { name, password, mobile, email, age, address } = formData
+        if (name && password && mobile && email && age && address) {
+            fetch("http://127.0.0.8:8000/post", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify(formData)
+            }).then(res => res.json())
+                .then(data => alert(data.message))
+        }
+        else {
+            alert("provide all the fields before submit")
+        }
     }
     return (
         <div>
